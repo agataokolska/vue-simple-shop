@@ -27,7 +27,11 @@
                  :style="{ backgroundColor: variant.variantColor }"
                  @mouseover="updateProduct(variant.variantImage)">
             </div>
-            <button @click="addToCart">Add to cart</button>
+            <button @click="addToCart"
+                    :disabled="!inStock"
+                    :class="{ disabledButton: !inStock }"
+            >Add to cart
+            </button>
             <div class="cart">
                 <p>Cart({{ cart }})</p>
             </div>
