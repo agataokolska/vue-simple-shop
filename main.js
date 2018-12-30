@@ -1,25 +1,66 @@
-var app =  new Vue({
-    el: '#app',
-    data: {
-        product: 'socks',
-        brand: 'Vue special',
-        selectedVariant: 0,
-        details: ['80% cotton', '20% polyester', 'male/female'],
-        variants: [
-            {
-                variantId: 111,
-                variantColor: 'green',
-                variantImage: './assets/vmSocks-green-onWhite.jpg',
-                variantQuantity: 11
-            },
-            {
-                variantId: 222,
-                variantColor: 'blue',
-                variantImage: './assets/vmSocks-blue-onWhite.jpg',
-                variantQuantity: 0
-            }
-        ],
-    cart: 0
+Vue.component('product', {
+    props: {
+        premium: {
+            type: Boolean,
+            required: true
+        }
+    },
+    template: `
+    <div class="product">
+        <div class="product-image">
+            <img :src="image">
+        </div>
+
+        <div class="product-info">
+            <h1>{{ title }}</h1>
+            <p v-if="inStock">In stock</p>
+            <p v-else>Out of stock</p>
+            <p>User is premium: {{ premium }}</p>
+            <p>Shipping: {{ shipping }}</p>
+
+            <ul>
+                <li v-for="detail in details">{{ detail }}</li>
+            </ul>
+
+            <div class="color-box"
+                 v-for="(variant, index) in variants"
+                 :key="variant.variantId"
+                 :style="{ backgroundColor: variant.variantColor }"
+                 @mouseover="updateProduct(index)">
+            </div>
+            <button @click="addToCart"
+                    :disabled="!inStock"
+                    :class="{ disabledButton: !inStock }"
+            >Add to cart
+            </button>
+            <div class="cart">
+                <p>Cart({{ cart }})</p>
+            </div>
+        </div>
+     </div>
+    `,
+    data() {
+        return {
+            product: 'socks',
+            brand: 'Vue special',
+            selectedVariant: 0,
+            details: ['80% cotton', '20% polyester', 'male/female'],
+            variants: [
+                {
+                    variantId: 111,
+                    variantColor: 'green',
+                    variantImage: './assets/vmSocks-green-onWhite.jpg',
+                    variantQuantity: 11
+                },
+                {
+                    variantId: 222,
+                    variantColor: 'blue',
+                    variantImage: './assets/vmSocks-blue-onWhite.jpg',
+                    variantQuantity: 0
+                }
+            ],
+            cart: 0
+        }
     },
     methods: {
         addToCart() {
@@ -38,6 +79,21 @@ var app =  new Vue({
         },
         inStock() {
             return this.variants[this.selectedVariant].variantQuantity
+        },
+        shipping() {
+            if(this.premium) {
+                return "Free"
+            } else {
+                return "12 zł"
+            }
         }
+    }
+})
+
+
+var app = new Vue({
+    el: '#app',
+    data: {
+        premium: true
     }
 })
